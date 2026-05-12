@@ -1,9 +1,13 @@
 import { io } from "socket.io-client";
 import { getStats } from "./system.js";
 
-const socket = io("http://tinisius.site");
+const socket = io("https://tinisius.site");
 
-console.log("conectar:");
+socket.on("connect", () => {
+  console.log("Conectado al servidor");
+});
+
+console.log("emito conexion rasp:");
 socket.emit("raspi_conn", (conn) => {
   console.log(conn);
 });
