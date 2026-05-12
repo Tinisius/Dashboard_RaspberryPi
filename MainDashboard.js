@@ -4,8 +4,8 @@ import { getStats } from "./system.js";
 const socket = io("http://tinisius.site");
 
 console.log("conectar:");
-socket.emit("raspi_conn", {
-  text: "hola soy rasp :v",
+socket.emit("raspi_conn", (conn) => {
+  console.log(conn);
 });
 
 socket.on("fetchResources", async (callback) => {
