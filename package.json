@@ -1,0 +1,17 @@
+{
+  "type": "module",
+  "name": "prueba",
+  "version": "1.0.0",
+  "main": "ZZZ_CON.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "os": "^0.1.2",
+    "socket.io-client": "^4.8.3",
+    "systeminformation": "^5.31.6"
+  }
+}
