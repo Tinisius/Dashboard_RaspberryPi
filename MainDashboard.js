@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import { getStats } from "./system.js";
 
-const socket = io("http://localhost:8000");
+const socket = io("http://tinisius.site");
 
 console.log("conectar:");
 socket.emit("raspi_conn", {
