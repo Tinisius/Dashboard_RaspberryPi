@@ -31,6 +31,9 @@ function testStop() {
 //devuelve una promesa que se resuelve al iniciar el server
 function startServer() {
   return new Promise((resolve, reject) => {
+    if (serverProcess) {
+      throw new Error("El server ya está prendido");
+    }
     //guardo el path de la carpeta del server NeoForge
     const serverPath = `${os.homedir()}/Desktop/NeoForge-21.1`;
 
@@ -56,6 +59,7 @@ function startServer() {
     serverProcess.stderr.on("data", (data) => {
       console.error(data.toString());
     });
+
     //al encontrar un error rechaza
     serverProcess.on("error", reject);
   });
@@ -66,6 +70,7 @@ function stopServer() {
   return new Promise((resolve) => {
     //evitamos apagarlo si ya esta apagado
     if (!serverProcess) {
+      console.log("no hay proceso que cerrar???");
       resolve();
       return;
     }
