@@ -103,8 +103,6 @@ KeepConnection();
 
 //piden recursos, devuelvo
 socket.on("fetchResources", async (callback) => {
-  console.log("me hicieron una request resources");
-
   callback(await getStats());
 });
 
