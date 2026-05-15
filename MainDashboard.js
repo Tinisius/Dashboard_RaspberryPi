@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 import { getStats } from "./system.js";
 import { Socket } from "socket.io";
 import { spawn } from "child_process";
-import os from os
+import { os }  from os
 
 let serverState = "off";
 let serverProcess = null;
