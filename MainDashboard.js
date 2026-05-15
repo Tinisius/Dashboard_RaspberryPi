@@ -105,7 +105,7 @@ async function startVpn() {
   });
   vpnProcess.stdout.on("data", (data) => {
     const text = data.toString();
-    if (text.includes('agent registered"')) {
+    if (text.includes("agent registered")) {
       console.log("Tunel iniciado!");
     }
   });
