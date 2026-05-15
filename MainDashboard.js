@@ -77,9 +77,6 @@ function stopServer() {
 
     // Esperar cierre completo
     serverProcess.on("close", () => {
-      console.log("🔴 Server apagado");
-
-      // IMPORTANTE
       serverProcess = null;
 
       resolve();
@@ -105,6 +102,10 @@ async function KeepConnection() {
 async function startVpn() {
   vpnProcess = spawn("bash", ["-c", "playit"], {
     shell: true,
+  });
+  vpnProcess.stdout.on("data", (data) => {
+    const text = data.toString();
+    console.log(text);
   });
 }
 
