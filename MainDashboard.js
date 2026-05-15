@@ -101,6 +101,14 @@ async function KeepConnection() {
   }
 }
 
+async function startVpn() {
+  vpnProcess = spawn("bash", ["-c", "playit"], {
+    shell: true,
+  });
+}
+
+startVpn();
+
 const socket = io("https://tinisius.site");
 //const socket = io("http://localhost:8000");
 
