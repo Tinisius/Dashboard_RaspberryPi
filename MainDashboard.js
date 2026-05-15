@@ -38,7 +38,7 @@ function startServer() {
     const serverPath = `${os.homedir()}/Desktop/NeoForge-21.1`;
 
     //levantamos una terminal y empezamos a iniciar el server
-    const serverProcess = spawn("./run.sh", {
+    serverProcess = spawn("./run.sh", {
       cwd: serverPath, //nos ubicamos en la carpeta del server, no podemos ~/Desktop/neoforge/run.sh porque Error: could not open `user_jvm_args.txt'
       shell: true,
     });
@@ -70,7 +70,6 @@ function stopServer() {
   return new Promise((resolve) => {
     //evitamos apagarlo si ya esta apagado
     if (!serverProcess) {
-      console.log("no hay proceso que cerrar???");
       resolve();
       return;
     }
