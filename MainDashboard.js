@@ -6,6 +6,7 @@ import os from "os";
 
 let serverState = "off";
 let serverProcess = null;
+let vpnProcess = null;
 
 const sleep = (sec) =>
   new Promise((resolve) => setTimeout(resolve, sec * 1000));
