@@ -2,6 +2,7 @@ import { io } from "socket.io-client";
 import { getStats } from "./system.js";
 import { Socket } from "socket.io";
 import { spawn } from "child_process";
+import os from os
 
 let serverState = "off";
 let serverProcess = null;
@@ -30,9 +31,13 @@ function testStop() {
 //devuelve una promesa que se resuelve al iniciar el server
 function startServer() {
   return new Promise((resolve, reject) => {
-    //levantamos una terminal empezamos a iniciar el server
-    serverProcess = spawn("bash", ["-c", "~/Desktop/NeoForge-21.1/run.sh"], {
-      shell: true,
+    //guardo el path de la carpeta del server NeoForge
+    const serverPath = `${os.homedir()}/Desktop/NeoForge-21.1`;
+
+    //levantamos una terminal y empezamos a iniciar el server
+    const server = spawn("./run.sh", {
+      cwd: serverPath,  //nos ubicamos en la carpeta del server, no podemos ~/Desktop/neoforge/run.sh porque Error: could not open `user_jvm_args.txt'
+      shell: true
     });
     //generamos un listener por cada vez que se escribe algo en la terminal (STanDard OUTput)
     serverProcess.stdout.on("data", (data) => {
@@ -115,29 +120,30 @@ socket.on("fetchState", async (callback) => {
 socket.on("changeState", async (newState) => {
   //valida no molestar los procesos pendientes
   if (newState === "starting" || newState === "stoping") return;
-
   //valida no prender lo prendido o apagar lo apagado
-  if (serverState !== newState) {
-    try {
-      //iniciar el server
-      if (newState === "started") {
-        socket.emit("update_sv", "starting");
-        serverState = "starting";
-        await startServer();
-        socket.emit("update_sv", "started");
-        serverState = "started";
-      }
-      //apagar el server
-      else if (newState === "off") {
-        socket.emit("update_sv", "closing");
-        serverState = "closing";
-        await stopServer();
-        socket.emit("update_sv", "off");
-        serverState = "off";
-      }
-    } catch (error) {
-      console.error("Error prendiendo/apagando", error);
-      socket.emit("update_sv", "error");
+  if (serverState === newState) return;
+
+  try {
+    //iniciar el server
+    if (newState === "started") {
+      socket.emit("update_sv", "starting");
+      serverState = "starting";
+      await startServer();
+      socket.emit("update_sv", "started");
+      serverState = "started";
     }
+    //apagar el server
+    else if (newState === "off") {
+      socket.emit("update_sv", "closing");
+      serverState = "closing";
+      await stopServer();
+      socket.emit("update_sv", "off");
+      serverState = "off";
+    }
+  } catch (error) {
+    //la idea seria caer aca solo si se corta el flujo
+    console.error("Error prendiendo/apagando", error);
+    socket.emit("update_sv", "error");
+    serverState = "Error";
   }
 });
