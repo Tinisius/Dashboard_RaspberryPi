@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { getStats } from "./system.js";
-import { Socket } from "socket.io";
+import { Socket } from "socket.io-client";
 import { spawn } from "child_process";
 import os from "os";
 
