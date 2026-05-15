@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 import { getStats } from "./system.js";
 import { Socket } from "socket.io";
 import { spawn } from "child_process";
-import { os }  from os
+import os from "os";
 
 let serverState = "off";
 let serverProcess = null;
@@ -36,8 +36,8 @@ function startServer() {
 
     //levantamos una terminal y empezamos a iniciar el server
     const server = spawn("./run.sh", {
-      cwd: serverPath,  //nos ubicamos en la carpeta del server, no podemos ~/Desktop/neoforge/run.sh porque Error: could not open `user_jvm_args.txt'
-      shell: true
+      cwd: serverPath, //nos ubicamos en la carpeta del server, no podemos ~/Desktop/neoforge/run.sh porque Error: could not open `user_jvm_args.txt'
+      shell: true,
     });
     //generamos un listener por cada vez que se escribe algo en la terminal (STanDard OUTput)
     serverProcess.stdout.on("data", (data) => {
