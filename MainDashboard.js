@@ -9,7 +9,7 @@ let vpnProcess = null;
 
 let sv_data = {
   state: "off",
-  serverPlayers: [],
+  players: [],
   startedAt: null,
 };
 
@@ -24,19 +24,13 @@ async function serverListener() {
     console.log(text);
     if (text.includes("joined the game")) {
       const match = text.match(/:\s(.+?) joined the game/);
-      sv_data.serverPlayers.push(match[1]);
-      socket.emit("update_sv_data", {
-        players: sv_data.serverPlayers,
-      });
+      sv_data.players.push(match[1]);
+      socket.emit("update_sv_data", sv_data);
     }
     if (text.includes("left the game")) {
       const match = text.match(/:\s(.+?) left the game/);
-      sv_data.serverPlayers = sv_data.serverPlayers.filter(
-        (item) => item !== match[1],
-      ); //elimina ese jugador del array
-      socket.emit("update_sv_data", {
-        players: sv_data.serverPlayers,
-      });
+      sv_data.players = sv_data.players.filter((item) => item !== match[1]); //elimina ese jugador del array
+      socket.emit("update_sv_data", sv_data);
     }
   });
 
