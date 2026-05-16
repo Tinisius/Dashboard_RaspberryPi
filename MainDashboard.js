@@ -4,30 +4,46 @@ import { Socket } from "socket.io-client";
 import { spawn } from "child_process";
 import os from "os";
 
-let serverState = "off";
 let serverProcess = null;
 let vpnProcess = null;
+
+let sv_data = {
+  state: "off",
+  serverPlayers: [],
+  startedAt: null,
+};
 
 const sleep = (sec) =>
   new Promise((resolve) => setTimeout(resolve, sec * 1000));
 
 //---------------------------------------------------------------------------------------
-/*
-function testStart() {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve();
-    }, 5000);
+
+async function serverListener() {
+  serverProcess.stdout.on("data", (data) => {
+    const text = data.toString();
+    console.log(text);
+    if (text.includes("joined the game")) {
+      const match = text.match(/:\s(.+?) joined the game/);
+      sv_data.serverPlayers.push(match[1]);
+      socket.emit("update_sv_data", {
+        players: sv_data.serverPlayers,
+      });
+    }
+    if (text.includes("left the game")) {
+      const match = text.match(/:\s(.+?) left the game/);
+      sv_data.serverPlayers = sv_data.serverPlayers.filter(
+        (item) => item !== match[1],
+      ); //elimina ese jugador del array
+      socket.emit("update_sv_data", {
+        players: sv_data.serverPlayers,
+      });
+    }
+  });
+
+  serverProcess.once("close", () => {
+    return;
   });
 }
-function testStop() {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve();
-    }, 5000);
-  });
-}
-*/
 
 //devuelve una promesa que se resuelve al iniciar el server
 function startServer() {
@@ -48,10 +64,9 @@ function startServer() {
       //convertimos el Buffer Object a string
       const text = data.toString();
 
-      console.log(text);
-
       // Detectar cuando termina y resuelve la promesa
       if (text.includes('For help, type "help"')) {
+        serverListener(); //queda en background escuchando todos los eventos del server
         resolve();
       }
     });
@@ -78,7 +93,6 @@ function stopServer() {
     // Esperar cierre completo
     serverProcess.on("close", () => {
       serverProcess = null;
-
       resolve();
     });
 
@@ -106,6 +120,7 @@ async function startVpn() {
   vpnProcess.stdout.on("data", (data) => {
     const text = data.toString();
     if (text.includes("agent registered")) {
+      //no funciona
       console.log("Tunel iniciado!");
     }
   });
@@ -128,38 +143,43 @@ socket.on("fetchResources", async (callback) => {
 });
 
 //piden estado del sv, devuelvo
-socket.on("fetchState", async (callback) => {
+socket.on("fetchData", async (callback) => {
   console.log("me hicieron una request state");
-  callback(serverState); //devuelve
+  callback(sv_data); //devuelve
 });
 
+//cambia el estado del servidor (off->on u on->off) y avisa de ese cambio
 socket.on("changeState", async (newState) => {
-  //valida no molestar los procesos pendientes
-  if (newState === "starting" || newState === "stoping") return;
-  //valida no prender lo prendido o apagar lo apagado
-  if (serverState === newState) return;
+  if (sv_data.state === "starting" || sv_data.state === "stoping") return;
+  if (sv_data.state === newState) return;
 
   try {
     //iniciar el server
     if (newState === "started") {
-      socket.emit("update_sv", "starting");
-      serverState = "starting";
+      sv_data.state = "starting";
+      socket.emit("update_sv_data", sv_data); //se manda el starting
       await startServer();
-      socket.emit("update_sv", "started");
-      serverState = "started";
+
+      sv_data.state = "started";
+      sv_data.startedAt = Date.now();
+      socket.emit("update_sv_data", sv_data); //se manda started y la hora de apertura
     }
     //apagar el server
     else if (newState === "off") {
-      socket.emit("update_sv", "closing");
-      serverState = "closing";
+      sv_data.state = "closing";
+      socket.emit("update_sv_data", sv_data); //se manda el closing
       await stopServer();
-      socket.emit("update_sv", "off");
-      serverState = "off";
+
+      sv_data.state = "off";
+      sv_data.startedAt = null;
+      sv_data.serverPlayers = [];
+      socket.emit("update_sv_data", sv_data); //se manda off y la hora de apertura=null
     }
   } catch (error) {
     //la idea seria caer aca solo si se corta el flujo
     console.error("Error prendiendo/apagando", error);
-    socket.emit("update_sv", "error");
-    serverState = "Error";
+    sv_data.state = "Error";
+    sv_data.startedAt = null;
+    socket.emit("update_sv_data", sv_data);
   }
 });
