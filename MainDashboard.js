@@ -15,16 +15,16 @@ let sv_data = {
 };
 
 const sleep = (sec) =>
-  new Promise((resolve) => setTimeout(resolve, sec * 1000));
+  new Promise((resolve) => globalThis.setTimeout(resolve, sec * 1000));
 
 //---------------------------------------------------------------------------------------
 
-async function setTimeout(time = 300) {
+async function startIdleTimeout(time = 300) {
   sv_data.timeOut = time;
   //itero con variable global para hacer seguimiento en sv_data
   while (sv_data.timeOut > 0 && sv_data.players.length === 0) {
     sv_data.timeOut--;
-    sleep(1);
+    await sleep(1);
   }
   //si paso el tiempo (no se unio nadie) apagamos
   if (sv_data.timeOut === 0 && sv_data.state === "started") {
@@ -41,7 +41,7 @@ async function setTimeout(time = 300) {
 }
 
 async function serverListener() {
-  setTimeout();
+  startIdleTimeout();
   serverProcess.stdout.on("data", (data) => {
     const text = data.toString();
     console.log(text);
@@ -56,7 +56,7 @@ async function serverListener() {
       socket.emit("update_sv_data", sv_data);
 
       if (sv_data.players.length === 0) {
-        setTimeout();
+        startIdleTimeout();
       }
     }
   });
