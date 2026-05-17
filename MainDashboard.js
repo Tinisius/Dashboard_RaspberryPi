@@ -11,6 +11,7 @@ let sv_data = {
   state: "off",
   players: [],
   startedAt: null,
+  timeOut: 0,
 };
 
 const sleep = (sec) =>
@@ -18,7 +19,29 @@ const sleep = (sec) =>
 
 //---------------------------------------------------------------------------------------
 
+async function setTimeout(time = 300) {
+  sv_data.timeOut = time;
+  //itero con variable global para hacer seguimiento en sv_data
+  while (sv_data.timeOut > 0 && sv_data.players.length === 0) {
+    sv_data.timeOut--;
+    sleep(1);
+  }
+  //si paso el tiempo (no se unio nadie) apagamos
+  if (sv_data.timeOut === 0) {
+    sv_data.state = "closing";
+    socket.emit("update_sv_data", sv_data);
+    await stopServer();
+
+    sv_data.state = "off";
+    sv_data.startedAt = null;
+    sv_data.serverPlayers = []; //por si alguien se mete en el ultimo segundo?
+    socket.emit("update_sv_data", sv_data);
+  }
+  return;
+}
+
 async function serverListener() {
+  setTimeout();
   serverProcess.stdout.on("data", (data) => {
     const text = data.toString();
     console.log(text);
@@ -31,6 +54,10 @@ async function serverListener() {
       const match = text.match(/:\s(.+?) left the game/);
       sv_data.players = sv_data.players.filter((item) => item !== match[1]); //elimina ese jugador del array
       socket.emit("update_sv_data", sv_data);
+
+      if (sv_data.players.length === 0) {
+        setTimeout();
+      }
     }
   });
 
