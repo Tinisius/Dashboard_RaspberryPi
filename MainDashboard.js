@@ -27,7 +27,7 @@ async function setTimeout(time = 300) {
     sleep(1);
   }
   //si paso el tiempo (no se unio nadie) apagamos
-  if (sv_data.timeOut === 0) {
+  if (sv_data.timeOut === 0 && sv_data.state === "started") {
     sv_data.state = "closing";
     socket.emit("update_sv_data", sv_data);
     await stopServer();
