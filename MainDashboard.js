@@ -34,7 +34,7 @@ async function startIdleTimeout(time = 65) {
 
     sv_data.state = "off";
     sv_data.startedAt = null;
-    sv_data.serverPlayers = []; //por si alguien se mete en el ultimo segundo?
+    sv_data.players = []; //por si alguien se mete en el ultimo segundo?
     socket.emit("update_sv_data", sv_data);
   }
   return;
@@ -193,7 +193,7 @@ socket.on("changeState", async (newState) => {
 
       sv_data.state = "off";
       sv_data.startedAt = null;
-      sv_data.serverPlayers = [];
+      sv_data.players = [];
       socket.emit("update_sv_data", sv_data); //se manda off y la hora de apertura=null
     }
   } catch (error) {
