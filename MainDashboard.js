@@ -19,7 +19,7 @@ const sleep = (sec) =>
 
 //---------------------------------------------------------------------------------------
 
-async function startIdleTimeout(time = 65) {
+async function startIdleTimeout(time = 300) {
   sv_data.timeOut = time;
   //itero con variable global para hacer seguimiento en sv_data
   while (sv_data.timeOut > 0 && sv_data.players.length === 0) {
@@ -58,6 +58,7 @@ async function serverListener() {
       if (sv_data.players.length === 0) {
         startIdleTimeout();
       }
+      //OJO! Podria pasar que el emit se ejecute ANTES que startIdleTimeout() setee sv_data.timeOut
       socket.emit("update_sv_data", sv_data);
     }
   });
