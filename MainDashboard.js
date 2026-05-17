@@ -19,7 +19,7 @@ const sleep = (sec) =>
 
 //---------------------------------------------------------------------------------------
 
-async function startIdleTimeout(time = 300) {
+async function startIdleTimeout(time = 65) {
   sv_data.timeOut = time;
   //itero con variable global para hacer seguimiento en sv_data
   while (sv_data.timeOut > 0 && sv_data.players.length === 0) {
