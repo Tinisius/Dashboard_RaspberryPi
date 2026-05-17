@@ -37,6 +37,7 @@ async function startIdleTimeout(time = 65) {
     sv_data.players = []; //por si alguien se mete en el ultimo segundo?
     socket.emit("update_sv_data", sv_data);
   }
+  sv_data.timeOut = 0;
   return;
 }
 
