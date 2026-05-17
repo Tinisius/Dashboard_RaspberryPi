@@ -166,6 +166,7 @@ socket.on("fetchResources", async (callback) => {
 //piden estado del sv, devuelvo
 socket.on("fetchData", async (callback) => {
   console.log("me hicieron una request state");
+  console.log("sv_data: ", sv_data);
   callback(sv_data); //devuelve
 });
 
