@@ -54,11 +54,11 @@ async function serverListener() {
     if (text.includes("left the game")) {
       const match = text.match(/:\s(.+?) left the game/);
       sv_data.players = sv_data.players.filter((item) => item !== match[1]); //elimina ese jugador del array
-      socket.emit("update_sv_data", sv_data);
 
       if (sv_data.players.length === 0) {
         startIdleTimeout();
       }
+      socket.emit("update_sv_data", sv_data);
     }
   });
 
