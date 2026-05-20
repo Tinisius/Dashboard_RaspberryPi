@@ -159,9 +159,7 @@ export function stopServer() {
 }
 
 export async function startVpn() {
-  vpnProcess = spawn("bash", ["-c", "playit"], {
-    shell: true,
-  });
+  vpnProcess = spawn("bash", ["-c", "playit"]);
   vpnProcess.stdout.on("data", (data) => {
     const text = data.toString();
     if (text.includes("agent registered")) {
