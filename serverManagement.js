@@ -110,7 +110,7 @@ export function startServer() {
       throw new Error("El server ya está prendido");
     }
     //guardo el path de la carpeta del server NeoForge
-    const serverPath = `${os.homedir()}/Desktop/Forge`;
+    const serverPath = `${os.homedir()}/Desktop/Forge-1.20.1`;
 
     //levantamos una terminal y empezamos a iniciar el server
     serverProcess = spawn("./run.sh", {
