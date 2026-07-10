@@ -7,12 +7,11 @@ import { startVpn, registerServerSocketHandlers } from "./serverManagement.js";
 
 async function KeepConnection() {
   while (true) {
-    console.log("reconectando...");
     socket.emit("raspi_conn", (conn) => {
       console.log(conn);
     });
-    //espera 5 min
-    await sleep(300);
+    //espera 1 min
+    await sleep(60);
   }
 }
 
