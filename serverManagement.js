@@ -37,6 +37,7 @@ async function startIdleTimeout(time = 300) {
 }
 
 function manageLog(log) {
+  console.log(log);
   sv_data.logs.push(log); //guarda el registro en svData
   socket.emit("newLog", log);
 }
@@ -76,6 +77,7 @@ export function registerServerSocketHandlers(ioSocket) {
 
   socket.on("fetchData", async (callback) => {
     console.log("me hicieron una request de sv data");
+    console.log(sv_data);
     callback(sv_data);
   });
 
