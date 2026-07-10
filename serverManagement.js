@@ -1,6 +1,7 @@
 import { spawn } from "child_process";
 import os from "os";
 import { sleep } from "./utils.js";
+import { log } from "console";
 
 let serverProcess = null;
 let vpnProcess = null;
@@ -11,6 +12,7 @@ export let sv_data = {
   players: [],
   startedAt: null,
   timeOut: 0,
+  logs: [],
 };
 
 async function startIdleTimeout(time = 300) {
@@ -35,11 +37,18 @@ async function startIdleTimeout(time = 300) {
   return;
 }
 
+function manageLog(log) {
+  sv_data.logs.push(log); //guarda el registro en svData
+  socket.emit("newLog", log);
+}
+
 async function serverListener() {
   startIdleTimeout();
   serverProcess.stdout.on("data", (data) => {
     const text = data.toString();
-    console.log(text);
+
+    manageLog(text);
+
     if (text.includes("joined the game")) {
       const match = text.match(/:\s(.+?) joined the game/);
       sv_data.players.push(match[1]);
@@ -67,7 +76,7 @@ export function registerServerSocketHandlers(ioSocket) {
   socket = ioSocket;
 
   socket.on("fetchData", async (callback) => {
-    console.log("me hicieron una request state");
+    console.log("me hicieron una request de sv data");
     callback(sv_data);
   });
 
@@ -112,6 +121,8 @@ export function startServer() {
     //guardo el path de la carpeta del server NeoForge
     const serverPath = `${os.homedir()}/Desktop/Forge-1.20.1`;
 
+    sv_data.logs = []; //borramos los logs viejos
+
     //levantamos una terminal y empezamos a iniciar el server
     serverProcess = spawn("./run.sh", {
       cwd: serverPath, //nos ubicamos en la carpeta del server, no podemos ~/Desktop/neoforge/run.sh porque Error: could not open `user_jvm_args.txt'
@@ -120,6 +131,8 @@ export function startServer() {
     serverProcess.stdout.on("data", (data) => {
       //convertimos el Buffer Object a string
       const text = data.toString();
+
+      manageLog(text);
 
       // Detectar cuando termina y resuelve la promesa
       if (text.includes('For help, type "help"')) {
