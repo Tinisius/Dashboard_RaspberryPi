@@ -1,7 +1,6 @@
 import { spawn } from "child_process";
 import os from "os";
 import { sleep } from "./utils.js";
-import { log } from "console";
 
 let serverProcess = null;
 let vpnProcess = null;
@@ -12,7 +11,7 @@ export let sv_data = {
   players: [],
   startedAt: null,
   timeOut: 0,
-  logs: [],
+  logs: ["inicial"],
 };
 
 async function startIdleTimeout(time = 300) {
@@ -121,7 +120,7 @@ export function startServer() {
     //guardo el path de la carpeta del server NeoForge
     const serverPath = `${os.homedir()}/Desktop/Forge-1.20.1`;
 
-    sv_data.logs = []; //borramos los logs viejos
+    sv_data.logs = ["inicial"]; //borramos los logs viejos
 
     //levantamos una terminal y empezamos a iniciar el server
     serverProcess = spawn("./run.sh", {
