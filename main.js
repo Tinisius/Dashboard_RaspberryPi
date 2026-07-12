@@ -8,9 +8,9 @@ import { startVpn, registerServerSocketHandlers } from "./serverManagement.js";
 async function KeepConnection() {
   while (true) {
     socket.emit("raspi_conn", (conn) => {
-      console.log(conn);
+      //si conecta podria ir un console.log
     });
-    //espera 1 seg
+    //espera 10 seg
     await sleep(10);
   }
 }
