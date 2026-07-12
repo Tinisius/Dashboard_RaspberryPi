@@ -1,3 +1,4 @@
+import { spawn } from "child_process";
 import os from "os";
 import { sleep } from "./utils.js";
 
@@ -75,7 +76,6 @@ export function registerServerSocketHandlers(ioSocket) {
   socket = ioSocket;
 
   socket.on("fetchData", async (callback) => {
-    console.log("me hicieron una request de sv data");
     console.log(sv_data);
     callback(sv_data);
   });
@@ -170,7 +170,6 @@ export function stopServer() {
   });
 }
 /*
-import { spawn } from "child_process";
 
 export /async/ function startVpn() {
   vpnProcess = spawn("bash", ["-c", "playit"]);

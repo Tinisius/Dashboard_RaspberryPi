@@ -10,8 +10,8 @@ async function KeepConnection() {
     socket.emit("raspi_conn", (conn) => {
       console.log(conn);
     });
-    //espera 1 min
-    await sleep(60);
+    //espera 1 seg
+    await sleep(10);
   }
 }
 
