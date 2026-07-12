@@ -1,4 +1,3 @@
-import { spawn } from "child_process";
 import os from "os";
 import { sleep } from "./utils.js";
 
@@ -170,13 +169,29 @@ export function stopServer() {
     serverProcess.stdin.write("stop\n");
   });
 }
+/*
+import { spawn } from "child_process";
 
-export async function startVpn() {
+export /async/ function startVpn() {
   vpnProcess = spawn("bash", ["-c", "playit"]);
   vpnProcess.stdout.on("data", (data) => {
     const text = data.toString();
     if (text.includes("agent registered")) {
       //no funciona
+      console.log("Tunel iniciado!");
+    }
+  });
+}
+*/
+import { exec } from "child_process";
+
+export function startVpn() {
+  const child = exec("playit");
+
+  child.stdout.on("data", (data) => {
+    console.log(data);
+
+    if (data.includes("agent registered")) {
       console.log("Tunel iniciado!");
     }
   });
