@@ -17,8 +17,8 @@ async function KeepConnection() {
 
 startVpn();
 
-//const socket = io("https://tinisius.site");
-const socket = io("http://localhost:8000");
+const socket = io("https://tinisius.site");
+//const socket = io("http://localhost:8000");
 
 socket.on("connect", () => {
   console.log("Conectado al servidor");
