@@ -80,7 +80,6 @@ export function registerServerSocketHandlers(ioSocket) {
   socket = ioSocket;
 
   socket.on("fetchData", async (callback) => {
-    console.log(sv_data);
     callback(sv_data);
   });
 
