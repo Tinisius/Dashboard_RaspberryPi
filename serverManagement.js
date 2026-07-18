@@ -14,12 +14,18 @@ export let sv_data = {
   logs: [""],
 };
 
-async function startIdleTimeout(time = 300) {
+async function startIdleTimeout(time = 600) {
   sv_data.timeOut = time;
+  const startingTime = Date.now(); //guardamos el instante (en milis)
   //itero con variable global para hacer seguimiento en sv_data
-  while (sv_data.timeOut > 0 && sv_data.players.length === 0) {
-    sv_data.timeOut--;
-    await sleep(1);
+  while (
+    sv_data.timeOut > 0 &&
+    sv_data.players.length === 0 &&
+    sv_data.state === "started"
+  ) {
+    const passedTimeMillis = Date.now() - startingTime; //miliseg que pasaron desde el startingTime
+    sv_data.timeOut = time - Math.trunc(passedTimeMillis / 1000);
+    await sleep(0.1);
   }
   //si paso el tiempo (no se unio nadie) apagamos
   if (sv_data.timeOut === 0 && sv_data.state === "started") {
@@ -169,19 +175,7 @@ export function stopServer() {
     serverProcess.stdin.write("stop\n");
   });
 }
-/*
 
-export /async/ function startVpn() {
-  vpnProcess = spawn("bash", ["-c", "playit"]);
-  vpnProcess.stdout.on("data", (data) => {
-    const text = data.toString();
-    if (text.includes("agent registered")) {
-      //no funciona
-      console.log("Tunel iniciado!");
-    }
-  });
-}
-*/
 import { exec } from "child_process";
 
 export function startVpn() {
