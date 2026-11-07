@@ -39,4 +39,5 @@ registerServerSocketHandlers(socket);
 //piden recursos, devuelvo
 socket.on("fetchResources", async (callback) => {
   callback(await getStats());
+  console.log("fetchResources");
 });
