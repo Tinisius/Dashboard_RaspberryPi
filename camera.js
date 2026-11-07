@@ -2,6 +2,7 @@ import { spawn } from "child_process";
 
 //arranca el proceso de la camara y setea listeners
 export function startCamera(socket) {
+  socket.emit("camera:frame", "al entrar en startCamera()");
   const ffmpeg = spawn("ffmpeg", [
     "-f",
     "v4l2",
@@ -22,10 +23,13 @@ export function startCamera(socket) {
     "pipe:1",
   ]);
 
+  socket.emit("camera:frame", "luego del spawn");
   let buffer = Buffer.alloc(0);
 
   //es un listener (no blockea el proceso), envia datos cada ve que llegan
   ffmpeg.stdout.on("data", (chunk) => {
+    socket.emit("camera:frame", "al recibir data de la camara");
+
     buffer = Buffer.concat([buffer, chunk]);
 
     while (true) {
