@@ -52,6 +52,7 @@ export function startCamera(socket) {
 
       // Enviar al servidor Socket.IO
       if (socket.connected) {
+        console.log("frame: enviando al socket");
         socket.emit("camera:frame", frame);
       }
 
