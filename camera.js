@@ -10,7 +10,7 @@ export function startCamera(socket) {
     "-video_size",
     "640x480",
     "-i",
-    "/dev/video1",
+    "/dev/video0",
     "-vf",
     "fps=10",
     "-q:v",
