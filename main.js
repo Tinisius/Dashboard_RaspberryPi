@@ -2,6 +2,7 @@ import { io } from "socket.io-client";
 import { getStats } from "./system.js";
 import { sleep } from "./utils.js";
 import { startVpn, registerServerSocketHandlers } from "./serverManagement.js";
+import { startCamera } from "./camera.js";
 
 //---------------------------------------------------------------------------------------
 
@@ -17,11 +18,16 @@ async function KeepConnection() {
 
 startVpn();
 
+let cameraProcess;
+
 const socket = io("https://tinisius.site");
 //const socket = io("http://localhost:8000");
 
 socket.on("connect", () => {
   console.log("Conectado al servidor");
+  if (!cameraProcess) {
+    cameraProcess = startCamera(socket);
+  }
 });
 
 //se revive el socket cada 5min
