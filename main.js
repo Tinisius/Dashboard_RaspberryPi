@@ -27,6 +27,7 @@ socket.on("connect", () => {
   console.log("Conectado al servidor");
   if (!cameraProcess) {
     cameraProcess = startCamera(socket);
+    socket.emit("camera:frame", "PRUEBA");
   }
 });
 
