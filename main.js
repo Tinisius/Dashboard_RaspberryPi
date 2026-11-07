@@ -26,7 +26,6 @@ const socket = io("https://tinisius.site");
 socket.on("connect", () => {
   console.log("Conectado al servidor");
   if (!cameraProcess) {
-    socket.emit("camera:frame", "al conectarme");
     cameraProcess = startCamera(socket);
   }
 });
