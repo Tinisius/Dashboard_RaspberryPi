@@ -25,8 +25,6 @@ export function startCamera(socket) {
 
   //es un listener (no bloquea el proceso), envia datos cada ve que llegan
   ffmpeg.stdout.on("data", (chunk) => {
-    socket.emit("camera:frame", "al recibir data de la camara");
-
     buffer = Buffer.concat([buffer, chunk]);
 
     while (true) {
