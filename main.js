@@ -19,16 +19,29 @@ async function KeepConnection() {
 startVpn();
 
 let cameraProcess;
+let cameraIdleTimer;
 
 const socket = io("https://tinisius.site");
 //const socket = io("http://localhost:8000");
 
+function keepCameraAlive() {
+  if (!cameraProcess) {
+    //si es la primera vez arranca el proceso
+    cameraProcess = startCamera(socket);
+    cameraProcess.once("close", () => {
+      cameraProcess = null;
+      clearTimeout(cameraIdleTimer);
+    });
+  }
+
+  //borra el timer anterior
+  clearTimeout(cameraIdleTimer);
+  //genera un nuevo timer, luego de 5 segundos mata el proceso
+  cameraIdleTimer = setTimeout(() => cameraProcess.kill(), 5000);
+}
+
 socket.on("connect", () => {
   console.log("Conectado al servidor");
-  if (!cameraProcess) {
-    socket.emit("camera:frame", "al conectarme");
-    cameraProcess = startCamera(socket);
-  }
 });
 
 //se revive el socket cada 5min
@@ -41,4 +54,8 @@ registerServerSocketHandlers(socket);
 socket.on("fetchResources", async (callback) => {
   callback(await getStats());
   console.log("fetchResources");
+});
+
+socket.on("keepAliveCamera", () => {
+  keepCameraAlive();
 });
