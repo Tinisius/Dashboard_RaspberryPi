@@ -51,7 +51,6 @@ export function startCamera(socket) {
 
       // Enviar al servidor Socket.IO
       if (socket.connected) {
-        console.log("frame: enviando al socket");
         socket.emit("camera:frame", frame);
       }
 
@@ -63,7 +62,7 @@ export function startCamera(socket) {
   ffmpeg.stderr.on("data", (data) => {
     // FFmpeg escribe sus mensajes de diagnóstico aquí
     // console.log(data.toString());
-    socket.emit("camera:frame", "error:" + data.toString());
+    console.log("[FFMPEG]", data.toString());
   });
 
   ffmpeg.on("error", (err) => {
